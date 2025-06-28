@@ -1,0 +1,40 @@
+stages:
+  - test
+  - report
+
+variables:
+  GIT_STRATEGY: clone
+
+before_script:
+  - echo "Установка зависимостей..."
+  - python -V
+  - pip install --upgrade pip
+  - pip install pytest selenium allure-pytest Faker
+
+run_tests:
+  image: python:3.13
+  name: "pytest-allure"
+  script:
+    - echo "Запуск автотестов с Allure..."
+    - mkdir -p allure-results
+    - pytest tests/test_text_box.py --alluredir=./allure-results
+  artifacts:
+    paths:
+      - allure-results/
+  only:
+    - main
+
+generate_allure_report:
+  image: qameta/allure:latest
+  stage: report
+  script:
+    - echo "Генерация Allure-отчёта..."
+    - allure generate ./allure-results -o ./allure-report --clean
+  artifacts:
+    when: always
+    paths:
+      - allure-report/
+  only:
+    - main
+
+
