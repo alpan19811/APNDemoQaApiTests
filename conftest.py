@@ -39,6 +39,7 @@ def driver(request):
         driver.save_screenshot(f"allure-results/{request.node.name}_fail.png")
         allure.attach(driver.get_screenshot_as_png(), name="screenshot", attachment_type=allure.attachment_type.PNG)
 
+
     driver.quit()
     logger.info("Браузер закрыт")
 
